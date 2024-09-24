@@ -12,19 +12,14 @@
       type="image/gif"
       sizes="16x16"
     />
-
-    <!-- Load contentDetails.css from the static folder -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/contentDetails.css') }}"
     />
-
     <link
       href="https://fonts.googleapis.com/css?family=Lato&display=swap"
       rel="stylesheet"
     />
-
-    <!-- header links -->
     <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
     <link
       href="https://fonts.googleapis.com/css?family=Lato&display=swap"
@@ -36,7 +31,7 @@
     <!-- HEADER -->
     <div id="1"></div>
     <script>
-      load("header.html");
+      load("{{ url_for('header') }}");
       function load(url) {
         req = new XMLHttpRequest();
         req.open("GET", url, false);
@@ -45,17 +40,16 @@
       }
     </script>
 
-    <div id="containerProduct">
-      <!-- JS rendered code -->
+    <div id="containerProduct" data-item-id="{{ item_id }}">
+      <!-- JS rendered code will appear here -->
     </div>
 
-    <!-- Load contentDetails.js from the static folder -->
     <script src="{{ url_for('static', filename='js/contentDetails.js') }}"></script>
 
     <!-- FOOTER -->
     <div id="4"></div>
     <script>
-      load("footer.html");
+      load("{{ url_for('footer') }}");
       function load(url) {
         req = new XMLHttpRequest();
         req.open("GET", url, false);

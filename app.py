@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,request
 
 app = Flask(__name__)
 
@@ -21,6 +21,18 @@ def slider():
 @app.route('/content')
 def content():
     return render_template('content.html')
+
+@app.route('/contentDetails/<int:id>')
+def content_details(id):
+    # Print the ID to the console
+    print(f"ID passed to content_details route: {id}")
+
+    # Pass the ID to the template if necessary for rendering or processing
+    return render_template('contentDetails.html', item_id=id)
+
+@app.route('/orderPlaced')
+def order_placed():
+    return render_template('orderPlaced.html')
 
 # Serve the footer.html file
 @app.route('/footer')
