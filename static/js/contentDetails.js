@@ -5,7 +5,11 @@ let id = urlParts[urlParts.length - 1]; // The ID is the last part of the path
 
 console.log("Extracted ID:", id);
 
-// Function to dynamically create and display product details
+if (document.cookie.indexOf(",counter=") >= 0) {
+  let counter = document.cookie.split(",")[1].split("=")[1];
+  document.getElementById("badge").innerHTML = counter;
+}
+
 function dynamicContentDetails(ob) {
   let mainContainer = document.createElement("div");
   mainContainer.id = "containerD";
@@ -16,12 +20,15 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
+  //imgTag.id = ob.photos
   imgTag.src = ob.preview;
 
   imageSectionDiv.appendChild(imgTag);
 
   let productDetailsDiv = document.createElement("div");
   productDetailsDiv.id = "productDetails";
+
+  // console.log(productDetailsDiv);
 
   let h1 = document.createElement("h1");
   let h1Text = document.createTextNode(ob.name);
@@ -30,6 +37,7 @@ function dynamicContentDetails(ob) {
   let h4 = document.createElement("h4");
   let h4Text = document.createTextNode(ob.brand);
   h4.appendChild(h4Text);
+  console.log(h4);
 
   let detailsDiv = document.createElement("div");
   detailsDiv.id = "details";
@@ -54,11 +62,13 @@ function dynamicContentDetails(ob) {
   h3ProductPreviewDiv.appendChild(h3ProductPreviewText);
   productPreviewDiv.appendChild(h3ProductPreviewDiv);
 
-  for (let i = 0; i < ob.photos.length; i++) {
+  let i;
+  for (i = 0; i < ob.photos.length; i++) {
     let imgTagProductPreviewDiv = document.createElement("img");
     imgTagProductPreviewDiv.id = "previewImg";
     imgTagProductPreviewDiv.src = ob.photos[i];
     imgTagProductPreviewDiv.onclick = function (event) {
+      console.log("clicked" + this.src);
       imgTag.src = ob.photos[i];
       document.getElementById("imgDetails").src = this.src;
     };
@@ -71,25 +81,39 @@ function dynamicContentDetails(ob) {
   let buttonTag = document.createElement("button");
   buttonDiv.appendChild(buttonTag);
 
-  let buttonText = document.createTextNode("Add to Cart");
+  buttonText = document.createTextNode("Add to Cart");
   buttonTag.onclick = function () {
     let order = id + " ";
     let counter = 1;
-
+  
+    // Check if the cookie contains a counter
     if (document.cookie.indexOf(",counter=") >= 0) {
-      order = id + " " + document.cookie.split(",")[0].split("=")[1];
-      counter = Number(document.cookie.split(",")[1].split("=")[1]) + 1;
+      let cookieParts = document.cookie.split(",");
+      // Extract the orderId part and trim any spaces
+      let existingOrder = cookieParts[0].split("=")[1].trim();
+      // Extract the counter and ensure it's a valid number
+      counter = Number(cookieParts[1].split("=")[1]);
+  
+      if (!isNaN(counter)) {
+        counter += 1;  // Increment counter
+      } else {
+        counter = 1; // Default to 1 if invalid counter
+      }
+  
+      order = id + " " + existingOrder;
     }
-
-    // Setting the orderId and counter cookies with path="/"
-    document.cookie = "orderId=" + order + "; path=/";
-    document.cookie = "counter=" + counter + "; path=/";
-
+  
+    // Update the cookie with new orderId and counter
+    document.cookie = "orderId=" + order + ",counter=" + counter;
     document.getElementById("badge").innerHTML = counter;
+    
+    // Debugging log
     console.log(document.cookie);
   };
+  
   buttonTag.appendChild(buttonText);
 
+  console.log(mainContainer.appendChild(imageSectionDiv));
   mainContainer.appendChild(imageSectionDiv);
   mainContainer.appendChild(productDetailsDiv);
   productDetailsDiv.appendChild(h1);
@@ -99,6 +123,7 @@ function dynamicContentDetails(ob) {
   detailsDiv.appendChild(h3);
   detailsDiv.appendChild(para);
   productDetailsDiv.appendChild(productPreviewDiv);
+
   productDetailsDiv.appendChild(buttonDiv);
 
   return mainContainer;
@@ -112,7 +137,10 @@ let httpRequest = new XMLHttpRequest();
     if (this.readyState === 4 && this.status == 200) {
       console.log("connected!!");
       let contentDetails = JSON.parse(this.responseText);
-      dynamicContentDetails(contentDetails);
+      {
+        console.log(contentDetails);
+        dynamicContentDetails(contentDetails);
+      }
     } else {
       console.log("not connected!");
     }

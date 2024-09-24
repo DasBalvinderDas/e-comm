@@ -75,7 +75,7 @@ let buttonTag = document.createElement("button");
 buttonDiv.appendChild(buttonTag);
 
 let buttonLink = document.createElement("a");
-buttonLink.href = "/orderPlaced";
+buttonLink.href = "/orderPlaced.html?";
 buttonTag.appendChild(buttonLink);
 
 buttonText = document.createTextNode("Place Order");
