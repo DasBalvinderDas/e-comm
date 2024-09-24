@@ -85,7 +85,7 @@ function dynamicContentDetails(ob) {
   buttonTag.onclick = function () {
     let order = id + " ";
     let counter = 1;
-  
+
     // Check if the cookie contains a counter
     if (document.cookie.indexOf(",counter=") >= 0) {
       let cookieParts = document.cookie.split(",");
@@ -93,24 +93,24 @@ function dynamicContentDetails(ob) {
       let existingOrder = cookieParts[0].split("=")[1].trim();
       // Extract the counter and ensure it's a valid number
       counter = Number(cookieParts[1].split("=")[1]);
-  
+
       if (!isNaN(counter)) {
-        counter += 1;  // Increment counter
+        counter += 1; // Increment counter
       } else {
         counter = 1; // Default to 1 if invalid counter
       }
-  
+
       order = id + " " + existingOrder;
     }
-  
-    // Update the cookie with new orderId and counter
-    document.cookie = "orderId=" + order + ",counter=" + counter;
+
+    // Update the cookie with new orderId and counter, and set path to '/'
+    document.cookie = "orderId=" + order + ",counter=" + counter + ";path=/";
     document.getElementById("badge").innerHTML = counter;
-    
+
     // Debugging log
     console.log(document.cookie);
   };
-  
+
   buttonTag.appendChild(buttonText);
 
   console.log(mainContainer.appendChild(imageSectionDiv));
