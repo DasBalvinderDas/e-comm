@@ -1,0 +1,87 @@
+/* General body styling */
+body {
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Container for the form to ensure it's below the header */
+#userFormContainer {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 100px 20px; /* Added padding to push it down */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* Form styling */
+form label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+form input[type="submit"] {
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+  background-color: #555;
+}
+
+.flashes {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  color: #fff;
+  background-color: #f44336;
+}
+
+.flashes.success {
+  background-color: #4caf50;
+}
+
+.flashes.error {
+  background-color: #f44336;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #userFormContainer {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  form input[type="text"],
+  form input[type="email"],
+  form select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  form input[type="submit"] {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}

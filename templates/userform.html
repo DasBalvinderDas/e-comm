@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>User Details Form</title>
+
+    <!-- Link to CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/userform.css') }}"
+    />
+
+    <script>
+      function validateForm() {
+        // Your existing JavaScript validation (if any)
+      }
+    </script>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <div id="1"></div>
+    <script>
+      load("header");
+      function load(url) {
+        req = new XMLHttpRequest();
+        req.open("GET", url, false);
+        req.send(null);
+        document.getElementById(1).innerHTML = req.responseText;
+      }
+    </script>
+
+    <!-- USER FORM SECTION -->
+    <div class="form-container">
+      <h1>User Details Form</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+      <form name="userForm" method="POST" onsubmit="return validateForm()">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required /><br /><br />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required /><br /><br />
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required /><br /><br />
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required /><br /><br />
+
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required /><br /><br />
+
+        <label for="zip_code">Zip Code:</label>
+        <input type="text" id="zip_code" name="zip_code" required /><br /><br />
+
+        <label for="shipping">Shipping:</label>
+        <select id="shipping" name="shipping">
+          <option value="1">Standard</option>
+          <option value="2">Express</option></select
+        ><br /><br />
+
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+
+    <!-- FOOTER (Optional if you want to include it) -->
+    <div id="4"></div>
+    <script>
+      load("footer");
+      function load(url) {
+        req = new XMLHttpRequest();
+        req.open("GET", url, false);
+        req.send(null);
+        document.getElementById(4).innerHTML = req.responseText;
+      }
+    </script>
+  </body>
+</html>
