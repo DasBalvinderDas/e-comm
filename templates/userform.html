@@ -32,7 +32,7 @@
     </script>
 
     <!-- USER FORM SECTION -->
-    <div class="form-container">
+    <div id="userFormContainer">
       <h1>User Details Form</h1>
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %}
@@ -67,14 +67,18 @@
           <option value="2">Express</option></select
         ><br /><br />
 
-        <input type="submit" value="Submit" />
+        <input
+          style="display: block; margin: 0 auto"
+          type="submit"
+          value="Submit"
+        />
       </form>
     </div>
 
     <!-- FOOTER (Optional if you want to include it) -->
     <div id="4"></div>
     <script>
-      load("footer");
+      load("{{ url_for('footer') }}");
       function load(url) {
         req = new XMLHttpRequest();
         req.open("GET", url, false);

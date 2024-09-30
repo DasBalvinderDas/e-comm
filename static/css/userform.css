@@ -5,15 +5,16 @@ body {
   background-color: #f5f5f5;
 }
 
-/* Container for the form to ensure it's below the header */
+/* Container for the form to ensure it's centered and spaced correctly */
 #userFormContainer {
   margin: 0 auto;
   max-width: 600px;
-  padding: 100px 20px; /* Added padding to push it down */
+  padding: 100px 20px; /* Adjust padding to ensure form is below header */
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  text-align: left; /* Ensure left-alignment of form elements */
 }
 
 /* Form styling */
@@ -82,6 +83,7 @@ form input[type="submit"]:hover {
 
   form input[type="submit"] {
     font-size: 14px;
-    padding: 8px 12px;
+    display: block;
+    margin: 0 auto;
   }
 }
