@@ -1,6 +1,6 @@
-import requests
 from flask import Flask, g, render_template, request, flash, jsonify, redirect, url_for
 import sqlite3
+import requests
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a strong secret key
@@ -42,9 +42,10 @@ def initdb_command():
 def get_shipping_options():
     """API endpoint to return shipping options."""
     shipping_options = [
-        {'id': 0, 'name': 'Standard'},
-        {'id': 2, 'name': 'Express'}
+        {'id': 1, 'name': 'Standard'},
+        {'id': 2, 'name': 'Custom'}
     ]
+   
     return jsonify(shipping_options)
 
 # Home route serving the main index.html
@@ -66,13 +67,8 @@ def userform():
 
         # Fetch shipping options from the API
         response = requests.get(url_for('get_shipping_options', _external=True))
-        
-        # Print the response status and content for debugging
-        print(response.status_code)
-        print(response.text)
-
         shipping_options = response.json()
-
+        print(shipping_options)
         # Get the selected shipping option ID from the form
         selected_shipping_id = int(request.form.get('shipping', 0))
 
@@ -81,8 +77,7 @@ def userform():
             (option['name'] for option in shipping_options if option['id'] == selected_shipping_id),
             None
         )
-        print(selected_shipping_method)
-        
+        print(selected_shipping_method)        
         # Insert user details and selected shipping option into the database
         conn = get_db()
         cursor = conn.cursor()
@@ -120,8 +115,8 @@ def search_product():
             return redirect(url_for('content_details', id=product_id))
 
     return "Product not found.", 404  # If no product found, return 404
-
-# Original content details route for a static ID-based view
+    
+# Route to display content details
 @app.route('/contentDetails/<int:id>')
 def content_details(id):
     print(f"ID passed to content_details route: {id}")
