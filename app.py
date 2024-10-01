@@ -1,6 +1,6 @@
+import requests
 from flask import Flask, g, render_template, request, flash, jsonify, redirect, url_for
 import sqlite3
-import requests
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a strong secret key
@@ -100,7 +100,28 @@ def userform():
 
     return render_template('userform.html')
 
-# Route to display content details
+# Fetch product list from mock API
+def fetch_products():
+    response = requests.get('https://5d76bf96515d1a0014085cf9.mockapi.io/product')
+    return response.json()
+
+# Search for a product by name and return the product's ID
+@app.route('/search', methods=['GET'])
+def search_product():
+    query = request.args.get('q', '').lower()  # Get search query from request
+    if not query:
+        return "Please enter a valid search query.", 400
+    
+    products = fetch_products()  # Fetch the products from the mock API
+    for product in products:
+        if query in product['name'].lower():  # Search for product by name (case-insensitive)
+            product_id = product['id']
+            # Redirect to the existing content_details route
+            return redirect(url_for('content_details', id=product_id))
+
+    return "Product not found.", 404  # If no product found, return 404
+
+# Original content details route for a static ID-based view
 @app.route('/contentDetails/<int:id>')
 def content_details(id):
     print(f"ID passed to content_details route: {id}")
