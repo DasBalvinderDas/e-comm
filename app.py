@@ -49,6 +49,7 @@ def get_shipping_options():
     return jsonify(shipping_options)
 
 # Home route serving the main index.html
+# Comment added in the feature branch
 @app.route('/')
 def home():
     return render_template('index.html')
