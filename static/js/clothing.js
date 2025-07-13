@@ -1,4 +1,6 @@
 let contentTitle;
+let containerClothing = document.getElementById("containerClothing");
+let containerAccessories = document.getElementById("containerAccessories");
 
 function dynamicClothingSection(ob) {
   let boxDiv = document.createElement("div");
@@ -37,14 +39,10 @@ function dynamicClothingSection(ob) {
 
 let httpRequest = new XMLHttpRequest();
 
-httpRequest.onreadystatechange = function() {
+httpRequest.onreadystatechange = function () {
   if (this.readyState === 4) {
-    if (this.status == 200) {
+    if (this.status === 200) {
       contentTitle = JSON.parse(this.responseText);
-      if (document.cookie.indexOf(",counter=") >= 0) {
-        var counter = document.cookie.split(",")[1].split("=")[1];
-        document.getElementById("badge").innerHTML = counter;
-      }
       for (let i = 0; i < contentTitle.length; i++) {
         if (contentTitle[i].isAccessory) {
           containerAccessories.appendChild(dynamicClothingSection(contentTitle[i]));

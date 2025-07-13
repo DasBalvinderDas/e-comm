@@ -5,24 +5,20 @@ import requests
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a strong secret key
 
-# Path to the SQLite database
 DATABASE = 'users.db'
 
-# Function to get a database connection
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
 
-# Function to close the database connection after each request
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
-# Initialize the database with a schema
 def init_db():
     with app.app_context():
         db = get_db()
@@ -30,14 +26,12 @@ def init_db():
             db.cursor().executescript(f.read())
         db.commit()
 
-# Command to initialize the database
 @app.cli.command('initdb')
 def initdb_command():
     """Initializes the database."""
     init_db()
     print('Initialized the database.')
 
-# API route to get shipping options
 @app.route('/shipping_options')
 def get_shipping_options():
     """API endpoint to return shipping options."""
@@ -48,16 +42,13 @@ def get_shipping_options():
    
     return jsonify(shipping_options)
 
-# Home route serving the main index.html
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# User form route handling both GET and POST requests
 @app.route('/userform', methods=['GET', 'POST'])
 def userform():
     if request.method == 'POST':
-        # Collect user form data
         name = request.form['name']
         email = request.form['email']
         address = request.form['address']
@@ -65,20 +56,23 @@ def userform():
         state = request.form['state']
         zip_code = request.form['zip_code']
 
-        # Fetch shipping options from the API
         response = requests.get(url_for('get_shipping_options', _external=True))
         shipping_options = response.json()
-        print(shipping_options)
-        # Get the selected shipping option ID from the form
-        selected_shipping_id = int(request.form.get('shipping', 0))
 
-        # Find the matching shipping method by ID
+        selected_shipping_id = request.form.get('shipping')
+        if selected_shipping_id is None:
+            flash('Please select a shipping option.', 'error')
+            return redirect(url_for('userform'))
+        selected_shipping_id = int(selected_shipping_id)
+
         selected_shipping_method = next(
             (option['name'] for option in shipping_options if option['id'] == selected_shipping_id),
             None
         )
-        print(selected_shipping_method)        
-        # Insert user details and selected shipping option into the database
+        if selected_shipping_method is None:
+            flash('Invalid shipping option selected.', 'error')
+            return redirect(url_for('userform'))
+
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute(
@@ -87,47 +81,43 @@ def userform():
             (name, email, address, city, state, zip_code, selected_shipping_method)
         )
         conn.commit()
-        conn.close()
+        #conn.close() # Connection is closed in teardown_appcontext
 
-        # Flash success message and redirect back to the form
         flash('User details added successfully!', 'success')
         return redirect(url_for('userform'))
 
     return render_template('userform.html')
 
-# Fetch product list from mock API
 def fetch_products():
     response = requests.get('https://5d76bf96515d1a0014085cf9.mockapi.io/product')
     return response.json()
 
-# Search for a product by name and return the product's ID
 @app.route('/search', methods=['GET'])
 def search_product():
-    query = request.args.get('q', '').lower()  # Get search query from request
+    query = request.args.get('q', '').lower()
     if not query:
         return "Please enter a valid search query.", 400
     
-    products = fetch_products()  # Fetch the products from the mock API
+    products = fetch_products()
     for product in products:
-        if query in product['name'].lower():  # Search for product by name (case-insensitive)
+        if query in product['name'].lower():
             product_id = product['id']
-            # Redirect to the existing content_details route
             return redirect(url_for('content_details', id=product_id))
 
-    return "Product not found.", 404  # If no product found, return 404
-    
-# Route to display content details
+    return "Product not found.", 404
+
 @app.route('/contentDetails/<int:id>')
 def content_details(id):
     print(f"ID passed to content_details route: {id}")
-    return render_template('contentDetails.html', item_id=id)
+    product = next((p for p in fetch_products() if p['id'] == id), None)
+    if product is None:
+        return "Product not found.", 404
+    return render_template('contentDetails.html', item=product)
 
-# Route to display order placed page
 @app.route('/orderPlaced')
 def order_placed():
     return render_template('orderPlaced.html')
 
-# Serve the header, footer, and other content pages
 @app.route('/header')
 def header():
     return render_template('header.html')
@@ -144,7 +134,6 @@ def slider():
 def content():
     return render_template('content.html')
 
-# Additional routes for clothing, accessories, and cart pages
 @app.route('/clothing')
 def clothing():
     return render_template('clothing.html')
@@ -157,6 +146,5 @@ def accessories():
 def cart():
     return render_template('cart.html')
 
-# Main application entry point
 if __name__ == '__main__':
     app.run(debug=True)
