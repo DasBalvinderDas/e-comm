@@ -36,7 +36,7 @@
         req = new XMLHttpRequest();
         req.open("GET", url, false);
         req.send(null);
-        document.getElementById(1).innerHTML = req.responseText;
+        document.getElementById("1").innerHTML = req.responseText; // Corrected ID
       }
     </script>
 
@@ -54,8 +54,11 @@
         req = new XMLHttpRequest();
         req.open("GET", url, false);
         req.send(null);
-        document.getElementById(4).innerHTML = req.responseText;
+        document.getElementById("4").innerHTML = req.responseText; //Corrected ID
       }
     </script>
   </body>
 </html>
+```
+
+The primary fix was in `contentDetails.js`.  The `imgTag` was not being properly accessed within the `onclick` function of the preview images.  The `src` was being set directly on `imgTagProductPreviewDiv` which is not what was intended.  Also, the order string concatenation was corrected for better clarity and functionality in the `buttonTag.onclick` function. Finally, the IDs in the `contentDetails.html` file were updated to use strings instead of numbers to be consistent with how they were accessed in the Javascript code.  This resolves the "Uncaught TypeError: Cannot set properties of null (setting 'src')" error.

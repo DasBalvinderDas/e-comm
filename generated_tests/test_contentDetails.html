@@ -1,0 +1,71 @@
+```python
+import unittest
+from unittest import mock
+from unittest.mock import patch
+
+# This is a placeholder for a hypothetical templating engine. 
+# Replace this with your actual templating engine and adapt as needed.
+class TemplateRenderer:
+    def render(self, template_path, context):
+        #Simulate rendering the template.  Replace with your actual rendering logic.
+        with open(template_path, 'r') as f:
+            template_content = f.read()
+        
+        rendered_template = template_content.format(**context)
+        return rendered_template
+
+class TestContentDetailsHTML(unittest.TestCase):
+
+    def setUp(self):
+        self.renderer = TemplateRenderer()
+        self.template_path = "templates/contentDetails.html"
+
+    @patch('builtins.open')
+    def test_template_rendering_with_context(self, mock_open):
+        #Simulate file contents - this is crucial for testing
+        mock_file = mock.mock_open(read_data='<!DOCTYPE html><html lang="en"><head><title>CONTENT DETAILS | E-COMMERCE WEBSITE BY EDYODA</title></head><body><div id="1"></div><div id="containerProduct" data-item-id="{item_id}"></div><div id="4"></div></body></html>')
+        mock_open.side_effect = [mock_file.return_value]
+
+        context = {'item_id': 123}
+        rendered_template = self.renderer.render(self.template_path, context)
+        self.assertIn('<div id="containerProduct" data-item-id="123">', rendered_template)
+
+    @patch('builtins.open')
+    def test_template_rendering_without_context(self, mock_open):
+        #Simulate file contents
+        mock_file = mock.mock_open(read_data='<!DOCTYPE html><html lang="en"><head><title>CONTENT DETAILS | E-COMMERCE WEBSITE BY EDYODA</title></head><body><div id="1"></div><div id="containerProduct" data-item-id="{item_id}"></div><div id="4"></div></body></html>')
+        mock_open.side_effect = [mock_file.return_value]
+
+        # Expecting an error or a default value here, depending on how your templating engine handles missing context variables.
+        with self.assertRaises(KeyError) as context: #This assumes KeyError is raised if {item_id} is not found.  Adjust as needed.
+            self.renderer.render(self.template_path, {})
+        # Or, if your template handles missing values gracefully:
+        #rendered_template = self.renderer.render(self.template_path, {})
+        #self.assertIn('<div id="containerProduct" data-item-id="">', rendered_template) #Check for empty data-item-id
+
+
+    def test_title_presence(self):
+        #This test only checks the existence of the title tag within the file itself without needing to render.  More complex testing would require rendering.
+        with open(self.template_path, 'r') as f:
+            content = f.read()
+            self.assertIn("<title>CONTENT DETAILS | E-COMMERCE WEBSITE BY EDYODA</title>", content)
+
+    def test_favicon_presence(self):
+      with open(self.template_path, 'r') as f:
+          content = f.read()
+          self.assertIn("<link rel=\"icon\" href=\"https://yt3.ggpht.com/a/AGF-l78km1YyNXmF0r3-0CycCA0HLA_i6zYn_8NZEg=s900-c-k-c0xffffffff-no-rj-mo\"", content)
+
+    def test_css_link_presence(self):
+      with open(self.template_path, 'r') as f:
+          content = f.read()
+          self.assertIn("<link rel=\"stylesheet\" href=\"{{ url_for('static', filename='css/contentDetails.css') }}\"", content)
+
+    def test_js_link_presence(self):
+      with open(self.template_path, 'r') as f:
+          content = f.read()
+          self.assertIn("<script src=\"{{ url_for('static', filename='js/contentDetails.js') }}\"></script>", content)
+
+
+if __name__ == '__main__':
+    unittest.main()
+```
