@@ -20,7 +20,7 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // Set src to the first image in the array
 
   imageSectionDiv.appendChild(imgTag);
 
@@ -36,7 +36,7 @@ function dynamicContentDetails(ob) {
   let h4 = document.createElement("h4");
   let h4Text = document.createTextNode(ob.brand);
   h4.appendChild(h4Text);
-  console.log(h4);
+  // console.log(h4);
 
   let detailsDiv = document.createElement("div");
   detailsDiv.id = "details";
@@ -99,7 +99,9 @@ function dynamicContentDetails(ob) {
         counter = 1; // Default to 1 if invalid counter
       }
 
-      order = id + " " + existingOrder;
+      order = existingOrder + " " + id; //Correct order string
+    } else {
+      document.cookie = "orderId=" + id + ",counter=" + counter + ";path=/";
     }
 
     // Update the cookie with new orderId and counter, and set path to '/'
@@ -112,7 +114,7 @@ function dynamicContentDetails(ob) {
 
   buttonTag.appendChild(buttonText);
 
-  console.log(mainContainer.appendChild(imageSectionDiv));
+  // console.log(mainContainer.appendChild(imageSectionDiv));
   mainContainer.appendChild(imageSectionDiv);
   mainContainer.appendChild(productDetailsDiv);
   productDetailsDiv.appendChild(h1);
@@ -122,7 +124,6 @@ function dynamicContentDetails(ob) {
   detailsDiv.appendChild(h3);
   detailsDiv.appendChild(para);
   productDetailsDiv.appendChild(productPreviewDiv);
-
   productDetailsDiv.appendChild(buttonDiv);
 
   return mainContainer;
@@ -131,20 +132,15 @@ function dynamicContentDetails(ob) {
 // BACKEND CALLING
 
 let httpRequest = new XMLHttpRequest();
-{
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status == 200) {
-      console.log("connected!!");
-      let contentDetails = JSON.parse(this.responseText);
-      {
-        console.log(contentDetails);
-        dynamicContentDetails(contentDetails);
-      }
-    } else {
-      console.log("not connected!");
-    }
-  };
-}
+httpRequest.onreadystatechange = function () {
+  if (this.readyState === 4 && this.status == 200) {
+    console.log("connected!!");
+    let contentDetails = JSON.parse(this.responseText);
+    dynamicContentDetails(contentDetails);
+  } else {
+    console.log("not connected!");
+  }
+};
 
 httpRequest.open(
   "GET",
@@ -152,3 +148,6 @@ httpRequest.open(
   true
 );
 httpRequest.send();
+```
+
+```javascript

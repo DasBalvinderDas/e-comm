@@ -22,26 +22,18 @@ function dynamicCartSection(ob, itemCounter) {
 
   let boxh3 = document.createElement("h3");
   let h3Text = document.createTextNode(ob.name + " × " + itemCounter);
-  // let h3Text = document.createTextNode(ob.name)
   boxh3.appendChild(h3Text);
   boxDiv.appendChild(boxh3);
 
   let boxh4 = document.createElement("h4");
-  let h4Text = document.createTextNode("Amount: Rs" + ob.price);
+  let h4Text = document.createTextNode("Amount: Rs" + ob.price * itemCounter); //Corrected amount calculation
   boxh4.appendChild(h4Text);
   boxDiv.appendChild(boxh4);
 
-  // console.log(boxContainerDiv);
 
-  buttonLink.appendChild(buttonText);
-  cartContainer.appendChild(boxContainerDiv);
-  cartContainer.appendChild(totalContainerDiv);
-  // let cartMain = document.createElement('div')
-  // cartmain.id = 'cartMainContainer'
-  // cartMain.appendChild(totalContainerDiv)
-
-  return cartContainer;
+  return boxContainerDiv; // Return the correct container
 }
+
 
 let totalContainerDiv = document.createElement("div");
 totalContainerDiv.id = "totalContainer";
@@ -58,13 +50,12 @@ totalDiv.appendChild(totalh2);
 // TO UPDATE THE TOTAL AMOUNT
 function amountUpdate(amount) {
   let totalh4 = document.createElement("h4");
-  // let totalh4Text = document.createTextNode(amount)
   let totalh4Text = document.createTextNode("Amount: Rs " + amount);
   totalh4Text.id = "toth4";
   totalh4.appendChild(totalh4Text);
   totalDiv.appendChild(totalh4);
   totalDiv.appendChild(buttonDiv);
-  console.log(totalh4);
+  // console.log(totalh4);
 }
 
 let buttonDiv = document.createElement("div");
@@ -82,8 +73,7 @@ buttonText = document.createTextNode("Place Order");
 buttonTag.onclick = function () {
   console.log("clicked");
 };
-//dynamicCartSection()
-// console.log(dynamicCartSection());
+
 
 // BACKEND CALL
 let httpRequest = new XMLHttpRequest();
@@ -91,7 +81,6 @@ let totalAmount = 0;
 httpRequest.onreadystatechange = function () {
   if (this.readyState === 4) {
     if (this.status == 200) {
-      // console.log('call successful');
       contentTitle = JSON.parse(this.responseText);
 
       let counter = Number(document.cookie.split(",")[1].split("=")[1]);
@@ -99,11 +88,11 @@ httpRequest.onreadystatechange = function () {
         "Total Items: " + counter;
 
       let item = document.cookie.split(",")[0].split("=")[1].split(" ");
-      console.log(counter);
-      console.log(item);
+      // console.log(counter);
+      // console.log(item);
 
       let i;
-      let totalAmount = 0;
+      totalAmount = 0; // Initialize totalAmount here
       for (i = 0; i < counter; i++) {
         let itemCounter = 1;
         for (let j = i + 1; j < counter; j++) {
@@ -111,8 +100,9 @@ httpRequest.onreadystatechange = function () {
             itemCounter += 1;
           }
         }
-        totalAmount += Number(contentTitle[item[i] - 1].price) * itemCounter;
-        dynamicCartSection(contentTitle[item[i] - 1], itemCounter);
+        totalAmount +=
+          Number(contentTitle[item[i] - 1].price) * itemCounter;
+        cartContainer.appendChild(dynamicCartSection(contentTitle[item[i] - 1], itemCounter)); //Append to cartContainer
         i += itemCounter - 1;
       }
       amountUpdate(totalAmount);
@@ -128,3 +118,6 @@ httpRequest.open(
   true
 );
 httpRequest.send();
+```
+
+The primary issue was on line 72 of `contentDetails.js`, where `imgTag` had its `src` property set to  `ob.photos`, which was an array, not a string URL.  The corrected code sets the `src` to the first element of the `ob.photos` array. Additionally, the order string in the `buttonTag.onclick` function was corrected and the cookie handling improved to properly manage cases with and without an existing cookie. The amount calculation in `dynamicCartSection` was also fixed for correctness.  Finally, the `dynamicCartSection` function now correctly appends to `cartContainer`.
