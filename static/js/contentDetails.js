@@ -17,44 +17,53 @@ function dynamicContentDetails(ob) {
 
   let imageSectionDiv = document.createElement("div");
   imageSectionDiv.id = "imageSection";
+  mainContainer.appendChild(imageSectionDiv);
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // Set source to the first image in the array
 
   imageSectionDiv.appendChild(imgTag);
 
   let productDetailsDiv = document.createElement("div");
   productDetailsDiv.id = "productDetails";
+  mainContainer.appendChild(productDetailsDiv);
 
   // console.log(productDetailsDiv);
 
   let h1 = document.createElement("h1");
   let h1Text = document.createTextNode(ob.name);
   h1.appendChild(h1Text);
+  productDetailsDiv.appendChild(h1);
 
   let h4 = document.createElement("h4");
   let h4Text = document.createTextNode(ob.brand);
   h4.appendChild(h4Text);
-  console.log(h4);
+  productDetailsDiv.appendChild(h4);
+  // console.log(h4);
 
   let detailsDiv = document.createElement("div");
   detailsDiv.id = "details";
+  productDetailsDiv.appendChild(detailsDiv);
 
   let h3DetailsDiv = document.createElement("h3");
   let h3DetailsText = document.createTextNode("Rs " + ob.price);
   h3DetailsDiv.appendChild(h3DetailsText);
+  detailsDiv.appendChild(h3DetailsDiv);
 
   let h3 = document.createElement("h3");
   let h3Text = document.createTextNode("Description");
   h3.appendChild(h3Text);
+  detailsDiv.appendChild(h3);
 
   let para = document.createElement("p");
   let paraText = document.createTextNode(ob.description);
   para.appendChild(paraText);
+  detailsDiv.appendChild(para);
 
   let productPreviewDiv = document.createElement("div");
   productPreviewDiv.id = "productPreview";
+  productDetailsDiv.appendChild(productPreviewDiv);
 
   let h3ProductPreviewDiv = document.createElement("h3");
   let h3ProductPreviewText = document.createTextNode("Product Preview");
@@ -76,6 +85,7 @@ function dynamicContentDetails(ob) {
 
   let buttonDiv = document.createElement("div");
   buttonDiv.id = "button";
+  productDetailsDiv.appendChild(buttonDiv);
 
   let buttonTag = document.createElement("button");
   buttonDiv.appendChild(buttonTag);
@@ -112,39 +122,21 @@ function dynamicContentDetails(ob) {
 
   buttonTag.appendChild(buttonText);
 
-  console.log(mainContainer.appendChild(imageSectionDiv));
-  mainContainer.appendChild(imageSectionDiv);
-  mainContainer.appendChild(productDetailsDiv);
-  productDetailsDiv.appendChild(h1);
-  productDetailsDiv.appendChild(h4);
-  productDetailsDiv.appendChild(detailsDiv);
-  detailsDiv.appendChild(h3DetailsDiv);
-  detailsDiv.appendChild(h3);
-  detailsDiv.appendChild(para);
-  productDetailsDiv.appendChild(productPreviewDiv);
-
-  productDetailsDiv.appendChild(buttonDiv);
-
   return mainContainer;
 }
 
 // BACKEND CALLING
 
 let httpRequest = new XMLHttpRequest();
-{
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status == 200) {
-      console.log("connected!!");
-      let contentDetails = JSON.parse(this.responseText);
-      {
-        console.log(contentDetails);
-        dynamicContentDetails(contentDetails);
-      }
-    } else {
-      console.log("not connected!");
-    }
-  };
-}
+httpRequest.onreadystatechange = function () {
+  if (this.readyState === 4 && this.status == 200) {
+    console.log("connected!!");
+    let contentDetails = JSON.parse(this.responseText);
+    dynamicContentDetails(contentDetails);
+  } else {
+    console.log("not connected!");
+  }
+};
 
 httpRequest.open(
   "GET",
