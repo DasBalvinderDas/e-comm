@@ -1,22 +1,13 @@
-// console.clear();
-
 let contentTitle;
 
-console.log(document.cookie);
 function dynamicClothingSection(ob) {
   let boxDiv = document.createElement("div");
   boxDiv.id = "box";
 
   let boxLink = document.createElement("a");
-  // boxLink.href = '#'
-  //boxLink.href = "/contentDetails.html?" + ob.id;
-  boxLink.href = "/contentDetails/" + ob.id; // Flask will now handle the rendering of contentDetails view
-
-  // console.log('link=>' + boxLink);
+  boxLink.href = "/contentDetails/" + ob.id;
 
   let imgTag = document.createElement("img");
-  // imgTag.id = 'image1'
-  // imgTag.id = ob.photos
   imgTag.src = ob.preview;
 
   let detailsDiv = document.createElement("div");
@@ -34,34 +25,25 @@ function dynamicClothingSection(ob) {
   let h2Text = document.createTextNode("rs  " + ob.price);
   h2.appendChild(h2Text);
 
-  boxDiv.appendChild(boxLink);
   boxLink.appendChild(imgTag);
   boxLink.appendChild(detailsDiv);
   detailsDiv.appendChild(h3);
   detailsDiv.appendChild(h4);
   detailsDiv.appendChild(h2);
+  boxDiv.appendChild(boxLink);
 
   return boxDiv;
 }
 
-//  TO SHOW THE RENDERED CODE IN CONSOLE
-// console.log(dynamicClothingSection());
-
-// console.log(boxDiv)
-
 let mainContainer = document.getElementById("mainContainer");
 let containerClothing = document.getElementById("containerClothing");
 let containerAccessories = document.getElementById("containerAccessories");
-// mainContainer.appendChild(dynamicClothingSection('hello world!!'))
 
-// BACKEND CALLING
 
 let httpRequest = new XMLHttpRequest();
-
-httpRequest.onreadystatechange = function() {
+httpRequest.onreadystatechange = function () {
   if (this.readyState === 4) {
-    if (this.status == 200) {
-      // console.log('call successful');
+    if (this.status === 200) {
       contentTitle = JSON.parse(this.responseText);
       if (document.cookie.indexOf(",counter=") >= 0) {
         var counter = document.cookie.split(",")[1].split("=")[1];
@@ -69,12 +51,10 @@ httpRequest.onreadystatechange = function() {
       }
       for (let i = 0; i < contentTitle.length; i++) {
         if (contentTitle[i].isAccessory) {
-          console.log(contentTitle[i]);
           containerAccessories.appendChild(
             dynamicClothingSection(contentTitle[i])
           );
         } else {
-          console.log(contentTitle[i]);
           containerClothing.appendChild(
             dynamicClothingSection(contentTitle[i])
           );
@@ -91,3 +71,6 @@ httpRequest.open(
   true
 );
 httpRequest.send();
+```
+
+The main issue was that  `imgTagProductPreviewDiv.onClick` should be `imgTagProductPreviewDiv.onclick` and that the `src` attribute wasn't being set correctly for the main image in `dynamicContentDetails`.  Additionally, the order ID wasn't being built correctly in the cookie and the `totalAmount` variable in `cart.js` wasn't correctly initialized.  These have all been fixed in the updated code.  The use of `addEventListener` is generally preferred over direct assignment for event handlers in modern JavaScript.

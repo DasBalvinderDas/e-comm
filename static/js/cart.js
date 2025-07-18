@@ -22,23 +22,15 @@ function dynamicCartSection(ob, itemCounter) {
 
   let boxh3 = document.createElement("h3");
   let h3Text = document.createTextNode(ob.name + " × " + itemCounter);
-  // let h3Text = document.createTextNode(ob.name)
   boxh3.appendChild(h3Text);
   boxDiv.appendChild(boxh3);
 
   let boxh4 = document.createElement("h4");
-  let h4Text = document.createTextNode("Amount: Rs" + ob.price);
+  let h4Text = document.createTextNode("Amount: Rs" + ob.price * itemCounter);
   boxh4.appendChild(h4Text);
   boxDiv.appendChild(boxh4);
 
-  // console.log(boxContainerDiv);
-
-  buttonLink.appendChild(buttonText);
   cartContainer.appendChild(boxContainerDiv);
-  cartContainer.appendChild(totalContainerDiv);
-  // let cartMain = document.createElement('div')
-  // cartmain.id = 'cartMainContainer'
-  // cartMain.appendChild(totalContainerDiv)
 
   return cartContainer;
 }
@@ -58,13 +50,11 @@ totalDiv.appendChild(totalh2);
 // TO UPDATE THE TOTAL AMOUNT
 function amountUpdate(amount) {
   let totalh4 = document.createElement("h4");
-  // let totalh4Text = document.createTextNode(amount)
   let totalh4Text = document.createTextNode("Amount: Rs " + amount);
   totalh4Text.id = "toth4";
   totalh4.appendChild(totalh4Text);
   totalDiv.appendChild(totalh4);
   totalDiv.appendChild(buttonDiv);
-  console.log(totalh4);
 }
 
 let buttonDiv = document.createElement("div");
@@ -82,16 +72,13 @@ buttonText = document.createTextNode("Place Order");
 buttonTag.onclick = function () {
   console.log("clicked");
 };
-//dynamicCartSection()
-// console.log(dynamicCartSection());
 
 // BACKEND CALL
 let httpRequest = new XMLHttpRequest();
 let totalAmount = 0;
 httpRequest.onreadystatechange = function () {
   if (this.readyState === 4) {
-    if (this.status == 200) {
-      // console.log('call successful');
+    if (this.status === 200) {
       contentTitle = JSON.parse(this.responseText);
 
       let counter = Number(document.cookie.split(",")[1].split("=")[1]);
@@ -103,19 +90,21 @@ httpRequest.onreadystatechange = function () {
       console.log(item);
 
       let i;
-      let totalAmount = 0;
+      totalAmount = 0; // Initialize totalAmount here
       for (i = 0; i < counter; i++) {
         let itemCounter = 1;
         for (let j = i + 1; j < counter; j++) {
-          if (Number(item[j]) == Number(item[i])) {
+          if (Number(item[j]) === Number(item[i])) {
             itemCounter += 1;
           }
         }
-        totalAmount += Number(contentTitle[item[i] - 1].price) * itemCounter;
+        totalAmount +=
+          Number(contentTitle[item[i] - 1].price) * itemCounter;
         dynamicCartSection(contentTitle[item[i] - 1], itemCounter);
         i += itemCounter - 1;
       }
       amountUpdate(totalAmount);
+      cartContainer.appendChild(totalContainerDiv);
     }
   } else {
     console.log("call failed!");
@@ -128,3 +117,6 @@ httpRequest.open(
   true
 );
 httpRequest.send();
+```
+
+```javascript

@@ -20,7 +20,7 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // Set src to the first image
 
   imageSectionDiv.appendChild(imgTag);
 
@@ -36,7 +36,7 @@ function dynamicContentDetails(ob) {
   let h4 = document.createElement("h4");
   let h4Text = document.createTextNode(ob.brand);
   h4.appendChild(h4Text);
-  console.log(h4);
+  // console.log(h4);
 
   let detailsDiv = document.createElement("div");
   detailsDiv.id = "details";
@@ -66,11 +66,11 @@ function dynamicContentDetails(ob) {
     let imgTagProductPreviewDiv = document.createElement("img");
     imgTagProductPreviewDiv.id = "previewImg";
     imgTagProductPreviewDiv.src = ob.photos[i];
-    imgTagProductPreviewDiv.onclick = function (event) {
+    imgTagProductPreviewDiv.addEventListener("click", function (event) {
       console.log("clicked" + this.src);
       imgTag.src = ob.photos[i];
       document.getElementById("imgDetails").src = this.src;
-    };
+    });
     productPreviewDiv.appendChild(imgTagProductPreviewDiv);
   }
 
@@ -81,7 +81,7 @@ function dynamicContentDetails(ob) {
   buttonDiv.appendChild(buttonTag);
 
   buttonText = document.createTextNode("Add to Cart");
-  buttonTag.onclick = function () {
+  buttonTag.addEventListener("click", function () {
     let order = id + " ";
     let counter = 1;
 
@@ -99,7 +99,9 @@ function dynamicContentDetails(ob) {
         counter = 1; // Default to 1 if invalid counter
       }
 
-      order = id + " " + existingOrder;
+      order = existingOrder + " " + id; // Correct order concatenation
+    } else {
+      document.cookie = "orderId=" + id + ",counter=" + counter + ";path=/";
     }
 
     // Update the cookie with new orderId and counter, and set path to '/'
@@ -108,11 +110,11 @@ function dynamicContentDetails(ob) {
 
     // Debugging log
     console.log(document.cookie);
-  };
+  });
 
   buttonTag.appendChild(buttonText);
 
-  console.log(mainContainer.appendChild(imageSectionDiv));
+  // console.log(mainContainer.appendChild(imageSectionDiv));
   mainContainer.appendChild(imageSectionDiv);
   mainContainer.appendChild(productDetailsDiv);
   productDetailsDiv.appendChild(h1);
@@ -122,7 +124,6 @@ function dynamicContentDetails(ob) {
   detailsDiv.appendChild(h3);
   detailsDiv.appendChild(para);
   productDetailsDiv.appendChild(productPreviewDiv);
-
   productDetailsDiv.appendChild(buttonDiv);
 
   return mainContainer;
@@ -131,20 +132,15 @@ function dynamicContentDetails(ob) {
 // BACKEND CALLING
 
 let httpRequest = new XMLHttpRequest();
-{
-  httpRequest.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status == 200) {
-      console.log("connected!!");
-      let contentDetails = JSON.parse(this.responseText);
-      {
-        console.log(contentDetails);
-        dynamicContentDetails(contentDetails);
-      }
-    } else {
-      console.log("not connected!");
-    }
-  };
-}
+httpRequest.onreadystatechange = function () {
+  if (this.readyState === 4 && this.status === 200) {
+    console.log("connected!!");
+    let contentDetails = JSON.parse(this.responseText);
+    dynamicContentDetails(contentDetails);
+  } else {
+    console.log("not connected!");
+  }
+};
 
 httpRequest.open(
   "GET",
@@ -152,3 +148,6 @@ httpRequest.open(
   true
 );
 httpRequest.send();
+```
+
+```javascript
