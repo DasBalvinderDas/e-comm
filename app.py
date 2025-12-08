@@ -45,7 +45,6 @@ def get_shipping_options():
         {'id': 1, 'name': 'Standard'},
         {'id': 2, 'name': 'Custom'}
     ]
-   
     return jsonify(shipping_options)
 
 # Home route serving the main index.html
@@ -57,6 +56,7 @@ def home():
 @app.route('/userform', methods=['GET', 'POST'])
 def userform():
     if request.method == 'POST':
+
         # Collect user form data
         name = request.form['name']
         email = request.form['email']
@@ -67,17 +67,31 @@ def userform():
 
         # Fetch shipping options from the API
         response = requests.get(url_for('get_shipping_options', _external=True))
-        shipping_options = response.json()
+
+        # BUG 1: BAD ERROR HANDLING → CAN MAKE shipping_options = None 
+        # This leads to a NoneType later and simulates a null-pointer bug.
+        if response.status_code != 200:
+            shipping_options = None   # BUG 1 intentionally created
+        else:
+            shipping_options = response.json()
+
         print(shipping_options)
+
         # Get the selected shipping option ID from the form
         selected_shipping_id = int(request.form.get('shipping', 0))
 
         # Find the matching shipping method by ID
         selected_shipping_method = next(
-            (option['name'] for option in shipping_options if option['id'] == selected_shipping_id),
+            (option['name'] for option in (shipping_options or []) if option['id'] == selected_shipping_id),
             None
         )
-        print(selected_shipping_method)        
+        print(selected_shipping_method)
+
+        # BUG 2: NULL POINTER TYPE BUG
+        # selected_shipping_method may be None → calling .strip() causes:
+        # AttributeError: 'NoneType' object has no attribute 'strip'
+        selected_shipping_method = selected_shipping_method.strip()  # BUG 2 intentionally added
+
         # Insert user details and selected shipping option into the database
         conn = get_db()
         cursor = conn.cursor()
@@ -98,24 +112,35 @@ def userform():
 # Fetch product list from mock API
 def fetch_products():
     response = requests.get('https://5d76bf96515d1a0014085cf9.mockapi.io/product')
-    return response.json()
+    data = response.json()
+
+    # BUG 3: WRONG JSON STRUCTURE EXPECTATION
+    # The API returns a list, not a dict with "items".
+    # This causes KeyError or TypeError at runtime.
+    return data["items"]  # BUG 3 intentionally added
+
 
 # Search for a product by name and return the product's ID
 @app.route('/search', methods=['GET'])
 def search_product():
-    query = request.args.get('q', '').lower()  # Get search query from request
+    query = request.args.get('q', '').lower()
     if not query:
         return "Please enter a valid search query.", 400
     
-    products = fetch_products()  # Fetch the products from the mock API
-    for product in products:
-        if query in product['name'].lower():  # Search for product by name (case-insensitive)
-            product_id = product['id']
-            # Redirect to the existing content_details route
-            return redirect(url_for('content_details', id=product_id))
+    products = fetch_products()  # Will break because of BUG 3
 
-    return "Product not found.", 404  # If no product found, return 404
-    
+    for product in products:
+        if query in product['name'].lower():
+            product_id = product['id']
+
+            # BUG 4: WRONG ROUTE NAME PASSED TO url_for
+            # Real endpoint name is "content_details" but using "contentDetails"
+            # Causes Flask BuildError
+            return redirect(url_for('contentDetails', id=product_id))  # BUG 4 intentionally added
+
+    return "Product not found.", 404
+
+
 # Route to display content details
 @app.route('/contentDetails/<int:id>')
 def content_details(id):
@@ -127,7 +152,6 @@ def content_details(id):
 def order_placed():
     return render_template('orderPlaced.html')
 
-# Serve the header, footer, and other content pages
 @app.route('/header')
 def header():
     return render_template('header.html')
@@ -144,7 +168,6 @@ def slider():
 def content():
     return render_template('content.html')
 
-# Additional routes for clothing, accessories, and cart pages
 @app.route('/clothing')
 def clothing():
     return render_template('clothing.html')
