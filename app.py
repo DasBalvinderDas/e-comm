@@ -87,10 +87,10 @@ def userform():
         )
         print(selected_shipping_method)
 
-        # BUG 2: NULL POINTER TYPE BUG
+        # BUG 2: NULL POINTER TYPE BUG fixed by handling None case
         # selected_shipping_method may be None → calling .strip() causes:
         # AttributeError: 'NoneType' object has no attribute 'strip'
-        selected_shipping_method = selected_shipping_method.strip()  # BUG 2 intentionally added
+        selected_shipping_method = selected_shipping_method.strip() if selected_shipping_method else "" # BUG 2 fixed
 
         # Insert user details and selected shipping option into the database
         conn = get_db()
