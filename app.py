@@ -68,7 +68,7 @@ def userform():
         # Fetch shipping options from the API
         response = requests.get(url_for('get_shipping_options', _external=True))
 
-        # BUG 1: BAD ERROR HANDLING → CAN MAKE shipping_options = None 
+        # BUG 1: BAD ERROR HANDLING → CAN MAKE shipping_options = None
         # This leads to a NoneType later and simulates a null-pointer bug.
         if response.status_code != 200:
             shipping_options = None   # BUG 1 intentionally created
@@ -90,7 +90,7 @@ def userform():
         # BUG 2: NULL POINTER TYPE BUG
         # selected_shipping_method may be None → calling .strip() causes:
         # AttributeError: 'NoneType' object has no attribute 'strip'
-        selected_shipping_method = selected_shipping_method.strip()  # BUG 2 intentionally added
+        selected_shipping_method = selected_shipping_method.strip() if selected_shipping_method else "" # Fix for BUG 2
 
         # Insert user details and selected shipping option into the database
         conn = get_db()
