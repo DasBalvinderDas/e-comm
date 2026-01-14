@@ -20,7 +20,7 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // FIX: Set initial src for the main image
 
   imageSectionDiv.appendChild(imgTag);
 
@@ -68,7 +68,7 @@ function dynamicContentDetails(ob) {
     imgTagProductPreviewDiv.src = ob.photos[i];
     imgTagProductPreviewDiv.onclick = function (event) {
       console.log("clicked" + this.src);
-      imgTag.src = ob.photos[i];
+      // FIX: Removed imgTag.src = ob.photos[i]; as it's redundant and 'i' is not captured correctly
       document.getElementById("imgDetails").src = this.src;
     };
     productPreviewDiv.appendChild(imgTagProductPreviewDiv);
