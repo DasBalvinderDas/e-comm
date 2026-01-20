@@ -20,7 +20,7 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // Set the initial source to the first photo
 
   imageSectionDiv.appendChild(imgTag);
 
@@ -68,7 +68,7 @@ function dynamicContentDetails(ob) {
     imgTagProductPreviewDiv.src = ob.photos[i];
     imgTagProductPreviewDiv.onclick = function (event) {
       console.log("clicked" + this.src);
-      imgTag.src = ob.photos[i];
+      // imgTag.src = ob.photos[i]; // Removed this line
       document.getElementById("imgDetails").src = this.src;
     };
     productPreviewDiv.appendChild(imgTagProductPreviewDiv);
@@ -90,7 +90,7 @@ function dynamicContentDetails(ob) {
       let cookieParts = document.cookie.split(",");
       // Extract the orderId part and trim any spaces
       let existingOrder = cookieParts[0].split("=")[1].trim();
-      // Extract the counter and ensure it's a valid number
+      // Extract the counter and ensure it\'s a valid number
       counter = Number(cookieParts[1].split("=")[1]);
 
       if (!isNaN(counter)) {
@@ -102,7 +102,7 @@ function dynamicContentDetails(ob) {
       order = id + " " + existingOrder;
     }
 
-    // Update the cookie with new orderId and counter, and set path to '/'
+    // Update the cookie with new orderId and counter, and set path to \'/'
     document.cookie = "orderId=" + order + ",counter=" + counter + ";path=/";
     document.getElementById("badge").innerHTML = counter;
 
