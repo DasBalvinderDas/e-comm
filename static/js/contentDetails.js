@@ -20,7 +20,8 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
+  imgTag.src = ob.photos[0]; // FIX: Set initial src from the first photo
+  // Removed: imgTag.id = ob.photos; // Bug: This line incorrectly overwrites imgTag.id with an array
 
   imageSectionDiv.appendChild(imgTag);
 
@@ -68,7 +69,7 @@ function dynamicContentDetails(ob) {
     imgTagProductPreviewDiv.src = ob.photos[i];
     imgTagProductPreviewDiv.onclick = function (event) {
       console.log("clicked" + this.src);
-      imgTag.src = ob.photos[i];
+      // Removed redundant assignment: imgTag.src = ob.photos[i];
       document.getElementById("imgDetails").src = this.src;
     };
     productPreviewDiv.appendChild(imgTagProductPreviewDiv);
