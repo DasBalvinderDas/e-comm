@@ -20,8 +20,6 @@ function dynamicContentDetails(ob) {
 
   let imgTag = document.createElement("img");
   imgTag.id = "imgDetails";
-  imgTag.id = ob.photos;
-
   imageSectionDiv.appendChild(imgTag);
 
   let productDetailsDiv = document.createElement("div");
